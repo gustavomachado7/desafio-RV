@@ -1,4 +1,4 @@
-Desafio Renda Variável
+DESAFIO RENDA VARIÁVEL
 
 Este projeto é uma implementação completa de um sistema para controle de investimentos em renda variável, abordando desde a modelagem de banco de dados até a integração de cotações em tempo real via Kafka.
 
