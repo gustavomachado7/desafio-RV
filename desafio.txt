@@ -1,4 +1,4 @@
-1. MODELAGEM DE BANCO RELACIONAL (MySQL)
+-- 1. MODELAGEM DE BANCO RELACIONAL (MySQL)
 
 CREATE TABLE Usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -48,28 +48,28 @@ CREATE TABLE Posicoes (
     FOREIGN KEY (ativo_id) REFERENCES ativos(id)
 );
 
-. Justificativas:
-- INT para chaves e identificadores (exceto operações/cotações, que podem crescer muito: BIGINT)
-- DECIMAL para valores monetários, com precisão de até 6 casas
-- ENUM para tipo de operação por simplicidade e clareza
-- Índices para consultas otimizadas em operações e cotações por tempo e chave composta
+-- Justificativas:
+-- INT para chaves e identificadores (exceto operações/cotações, que podem crescer muito: BIGINT)
+-- DECIMAL para valores monetários, com precisão de até 6 casas
+-- ENUM para tipo de operação por simplicidade e clareza
+-- Índices para consultas otimizadas em operações e cotações por tempo e chave composta
 
 --------------------------------------------------------
 
-2. ÍNDICES E PERFORMANCE
+-- 2. ÍNDICES E PERFORMANCE
 
-- Índices já criados acima: (usuario_id, ativo_id, data_hora) na tabela OPERACOES
+-- Índices já criados acima: (usuario_id, ativo_id, data_hora) na tabela OPERACOES
 
-- Consulta SQL otimizada:
+-- Consulta SQL otimizada:
 SELECT * FROM operacoes
 WHERE usuario_id = @usuario_id
   AND ativo_id = @ativo_id
   AND data_hora >= NOW() - INTERVAL 30 DAY
 ORDER BY data_hora DESC;
 
-- Atualização da posição com base em cotação (lógica exemplo):
+-- Atualização da posição com base em cotação (lógica exemplo):
 
-- Atualiza P&L:
+-- Atualiza P&L:
 UPDATE posicoes p
 JOIN cotacoes c ON p.ativo_id = c.ativo_id
 SET p.pl = (c.preco_unitario - p.preco_medio) * p.quantidade
@@ -77,9 +77,9 @@ WHERE c.data_hora = (SELECT MAX(c2.data_hora) FROM cotacoes c2 WHERE c2.ativo_id
 
 ----------------------------------------------------------------------------
 
-3. APLICAÇÃO
+// 3. APLICAÇÃO
 
-- Estrutura e arquivos são organizados em camadas: Models, Services, Repositories, Program.cs
+// Estrutura e arquivos são organizados em camadas: Models, Services, Repositories, Program.cs
 
 // Models/Operacao.cs
 public class Operacao {
@@ -128,7 +128,7 @@ public class OperacaoRepository : IOperacaoRepository {
 
 ----------------------------------------------------------------------------
 
-4. LÓGICA DE NEGÓCIO - PREÇO MÉDIO
+// 4. LÓGICA DE NEGÓCIO - PREÇO MÉDIO
 
 public static decimal CalcularPrecoMedio(List<(int Quantidade, decimal Preco)> compras) {
     if (compras == null || !compras.Any() || compras.Any(c => c.Quantidade <= 0 || c.Preco <= 0))
@@ -143,7 +143,7 @@ public static decimal CalcularPrecoMedio(List<(int Quantidade, decimal Preco)> c
 ----------------------------------------------------------------------------
 
 
-7. INTEGRAÇÃO KAFKA (WORKER SERVICE: RETRY E IDEMPOTÊNCIA)
+// 7. INTEGRAÇÃO KAFKA (WORKER SERVICE: RETRY E IDEMPOTÊNCIA)
 
 public class CotacaoConsumer : BackgroundService
 {
